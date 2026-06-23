@@ -2,25 +2,25 @@ import axios from 'axios'
 import React, { useEffect } from 'react'
 import { backendURL } from '../App'
 import { useDispatch } from 'react-redux'
-import { setUserData } from '../redux/userSlice'
+import { setChannelData } from '../redux/userSlice'
 import { toast } from 'react-toastify'
 
-export const GetCurrentUser = () => {
+export const GetChannelData = () => {
     const dispatch = useDispatch();
 
-    const fetchUser = async () => {
+    const fetchChannel = async () => {
         try {
-            const result = await axios.get(`${backendURL}/api/user/getUser`, {withCredentials : true});
-            console.log('user', result.data);
-            dispatch(setUserData(result.data));
+            const result = await axios.get(`${backendURL}/api/user/getChannel`, {withCredentials : true});
+            console.log('channel', result.data);
+            dispatch(setChannelData(result.data));
         } catch (error) {
-            dispatch(setUserData(null));
+            dispatch(setChannelData(null));
             toast.error(error.response?.data?.message || "Something went wrong", { pauseOnHover: false });
             console.log(`some error occured while fetching user details : ${error.response}`);
         }
     }
 
     useEffect(() => {
-        fetchUser();
+        fetchChannel();
     }, [])
 }

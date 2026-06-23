@@ -10,11 +10,14 @@ import { MobileProfile } from './components/MobileProfile'
 import { ForgotPassword } from './components/ForgotPassword'
 import { CreateChannel } from './pages/channel/CreateChannel'
 import { ViewChannel } from './pages/channel/ViewChannel'
+import { GetChannelData } from './customHooks/GetChannelData'
+import { UpdateChannel } from './pages/channel/UpdateChannel'
 
 export const backendURL = "http://localhost:3000";
 
 export const App = () => {
   GetCurrentUser();
+  GetChannelData();
   return (
     <>
       <ToastContainer position="top-center" theme='dark' pauseOnHover='false'/>
@@ -23,6 +26,7 @@ export const App = () => {
           <Route path='/Shorts' element={<Shorts/>}/>
           <Route path='/mobileProfile' element={<MobileProfile/>}/>
           <Route path='/viewChannel' element={<ViewChannel/>}/>
+          <Route path='/updateChannel' element={<UpdateChannel/>}/>
         </Route>
         <Route path='/SignUp' element={<SignUp/>}/>
         <Route path='/Login' element={<Login/>}/>

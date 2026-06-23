@@ -8,14 +8,14 @@ import { backendURL } from '../../App';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 
-export const CreateChannel = () => {
-  const {userData} = useSelector(state => state.user);
+export const UpdateChannel = () => {
+  const {channelData} = useSelector(state => state.user);
   const [step, setStep] = useState(1);
   const [avatar, setAvatar] = useState(null);
   const [banner, setBanner] = useState(null);
-  const [channelName, setChannelName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [channelName, setChannelName] = useState(channelData?.name);
+  const [description, setDescription] = useState(channelData?.description);
+  const [category, setCategory] = useState(channelData?.category);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ export const CreateChannel = () => {
   const nextStep = () => setStep(prev => prev+1)
   const prevStep = () => setStep(prev => prev-1)
 
-  const handleCreateChannel = async () => {
+  const handleUpdateChannel = async () => {
     setLoading(true);
 
     const formData = new FormData();
@@ -41,13 +41,13 @@ export const CreateChannel = () => {
     formData.append("category", category);
 
     try {
-      const response = await axios.post(`${backendURL}/api/user/createChannel`, formData, {withCredentials : true});
+      const response = await axios.post(`${backendURL}/api/user/updateChannel`, formData, {withCredentials : true});
       console.log(response);
       toast.success(response.data.message, {pauseOnHover: false});
       navigate('/');
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", { pauseOnHover: false });
-      console.log(`create channel error : ${error}`);
+      console.log(`create update error : ${error}`);
     }
     finally{
       setLoading(false);
@@ -56,25 +56,13 @@ export const CreateChannel = () => {
 
   return (
     <div className='w-full min-h-screen bg-[#0f0f0f] flex flex-col'>
-      <header className='flex justify-between items-center px-6 py-3 border-b border-gray-700'>
-        <div className='flex items-center gapa-2 cursor-pointer' onClick={() => navigate('/')}>
-          <img src={logo} alt="myTube logo" className='w-8 h-8 object-cover'/>
-          <span className='font-bold text-xl tracking-tight'>MyTube</span>
-        </div>
-        {
-          userData?.photoUrl ? 
-            <img src={userData?.photoUrl} alt='your profile picture' className='w-9 h-9 rounded-full object-cover cursor-pointer'/>
-          :
-            <span className='bg-pink-600 text-white px-3 py-1 rounded-full font-bold' onClick={() => setPopup(prev => !prev)}> {userData?.userName?.[0]?.toUpperCase()} </span>
-        }
-      </header>
 
       <main className='flex flex-1 justify-center items-center px-4'>
         <div className='bg-[#212121] p-6 rounded-xl w-full max-w-lg shadow-lg'>
           {
             step === 1 && 
             <>
-              <h2 className='text-2xl font-semibold mb-4'>How you'll appear</h2>
+              <h2 className='text-2xl font-semibold mb-4'>Update channel</h2>
               <p className='text-sm text-gray-400 mb-6'>Choose your profile picture, Channel name</p>
 
               <label htmlFor="avatar" className='cursor-pointer flex flex-col items-center mb-6'>
@@ -99,7 +87,7 @@ export const CreateChannel = () => {
           {
             step === 2 && 
             <>
-              <h2 className='text-2xl font-semibold mb-4'>Your Channel</h2>
+              <h2 className='text-2xl font-semibold mb-4'>Your updated channel</h2>
 
               <div className='flex flex-col items-center mb-6'>
 
@@ -116,7 +104,7 @@ export const CreateChannel = () => {
                 <h2 className='mt-3 text-lg font-semibold'>{channelName}</h2>
               </div>
 
-              <button onClick={nextStep} disabled={!channelName} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>Continue and create channel</button>
+              <button onClick={nextStep} disabled={!channelName} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>Continue and update channel</button>
 
               <span className='w-full flex items-center justify-center text-sm text-blue-400 cursor-pointer hover:underline mt-2' onClick={prevStep}>Back</span>
             </>
@@ -125,7 +113,7 @@ export const CreateChannel = () => {
           {
             step === 3 && 
             <>
-              <h2 className='text-2xl font-semibold mb-4'>Create Channel</h2>
+              <h2 className='text-2xl font-semibold mb-4'>Update Channel</h2>
 
               <label htmlFor="banner" className='w-full cursor-pointer block mb-6'>
                 {
@@ -144,7 +132,7 @@ export const CreateChannel = () => {
               
               <input type="text" placeholder='Channel Category' className='w-full p-3 mb-6 rounded-lg bg-[#212121] border border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400' value={category} onChange={(e) => setCategory(e.target.value)}/>
 
-              <button onClick={handleCreateChannel} disabled={!description || !category || loading} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>{loading ? <ClipLoader size={20} color='white'/> :"Save and Create Channel"}</button>
+              <button onClick={handleUpdateChannel} disabled={!description || !category || loading} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>{loading ? <ClipLoader size={20} color='white'/> :"Save and update Channel"}</button>
 
               <span className='w-full flex items-center justify-center text-sm text-blue-400 cursor-pointer hover:underline mt-2' onClick={prevStep}>Back</span>
             </>

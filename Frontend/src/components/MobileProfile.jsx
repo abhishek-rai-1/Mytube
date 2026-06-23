@@ -13,6 +13,7 @@ import { setUserData } from '../redux/userSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { backendURL } from '../App';
 
 export const MobileProfile = () => {
     const {userData} = useSelector(state => state.user);
@@ -57,7 +58,7 @@ export const MobileProfile = () => {
                     <div className='flex flex-col'>
                         <span className='font-semibold text-lg'>{userData?.userName}</span>
                         <span className='text-gray-400 text-sm'>{userData?.email}</span>
-                        <p className='text-sm text-blue-500 cursor-pointer hover:underline hover:text-blue-600'>{userData?.channel ? 'view channel' : 'create channel'}</p>
+                        <p className='text-sm text-blue-500 cursor-pointer hover:underline hover:text-blue-600' onClick={() => navigate(userData?.channel ? '/viewChannel' : '/createChannel')}>{userData?.channel ? 'view channel' : 'create channel'}</p>
                     </div>
                 </div>
             }
@@ -67,9 +68,9 @@ export const MobileProfile = () => {
 
                 <button className='bg-gray-800 cursor-pointer text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2' onClick = {() => navigate('/SignUp')}><TiUserAdd/>Create new account</button>
 
-                <button className='bg-gray-800 cursor-pointer text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2' onClick = {() => navigate('/Login')}><MdOutlineSwitchAccount/>Login with account</button>
+                <button className='bg-gray-800 cursor-pointer text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2' onClick = {() => navigate('/Login')}><MdOutlineSwitchAccount/>Login with other account</button>
 
-                <button className='bg-gray-800 cursor-pointer text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2' onClick={handleSignout}><RiLogoutBoxRLine/>SignOut</button>
+                {userData && <button className='bg-gray-800 cursor-pointer text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2' onClick={handleSignout}><RiLogoutBoxRLine/>SignOut</button>}
             </div>
 
             <div className='flex flex-col mt-5'>

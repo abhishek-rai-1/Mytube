@@ -30,7 +30,6 @@ export const Login = () => {
     }
     try {
       const result = await axios.post(`${backendURL}/api/auth/login`, userDetails, {withCredentials: true});
-      console.log(result);
       dispatch(setUserData(result.data.user));
       toast.success(result.data.message, {pauseOnHover: false});
       navigate('/');

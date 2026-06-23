@@ -10,7 +10,7 @@ export const Header = ({Sidebaropen, setSidebaropen, setPopup}) => {
     const {userData} = useSelector((state) => state.user);
 
     return (
-        <header className='fixed left-0 top-0 z-50 border-b border-gray-600 h-16 p-4 w-full'>
+        <header className='fixed left-0 top-0 z-50 border-b border-gray-600 h-16 p-4 w-full bg-gray-900'>
             <div className='flex items-center justify-between w-full'>
 
                 {/* left */}

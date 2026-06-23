@@ -64,7 +64,7 @@ export const Profile = () => {
                     <div>
                         <h2 className='font-semibold'>{userData?.userName}</h2>
                         <p className='text-sm text-gray-400'>{userData?.email}</p>
-                        <p className='text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:underline'>{userData?.channel ? 'view channel' : 'create channel'}</p>
+                        <p className='text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:underline' onClick={() => navigate(userData?.channel ? '/viewChannel' : '/createChannel')}>{userData?.channel ? 'view channel' : 'create channel'}</p>
                     </div>
                 </div>
             }

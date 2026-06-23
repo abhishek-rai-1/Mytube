@@ -74,7 +74,6 @@ export const SignIn = async (req, res) => {
         })
 
         const {password : destructuredPassword, ...userWithPassword} = user.toObject();
-        console.log(userWithPassword);
 
         return res.status(200).json({message : "user login successfully", user : userWithPassword});
     } catch (error) {
