@@ -11,7 +11,6 @@ export const GetCurrentUser = () => {
     const fetchUser = async () => {
         try {
             const result = await axios.get(`${backendURL}/api/user/getUser`, {withCredentials : true});
-            console.log('user', result.data);
             dispatch(setUserData(result.data));
         } catch (error) {
             dispatch(setUserData(null));

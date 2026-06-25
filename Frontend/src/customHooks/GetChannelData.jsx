@@ -11,7 +11,7 @@ export const GetChannelData = () => {
     const fetchChannel = async () => {
         try {
             const result = await axios.get(`${backendURL}/api/user/getChannel`, {withCredentials : true});
-            console.log('channel', result.data);
+            console.log(result);
             dispatch(setChannelData(result.data));
         } catch (error) {
             dispatch(setChannelData(null));

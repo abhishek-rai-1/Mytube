@@ -41,7 +41,7 @@ export const getChannel = async(req, res) => {
     try {
         const userId = req.userId;
 
-        const channel = await Channel.findOne({owner : userId}).populate("owner");
+        const channel = await Channel.findOne({owner : userId}).populate("owner", "-password");
         if(!channel)    return res.status(400).json({message : "channel is not found"});
 
         return res.status(200).json(channel);
@@ -56,10 +56,10 @@ export const updateChannel = async(req, res) => {
 
         const userId = req.userId;
 
-        const channel = await Channel.findOne({owner : userId});
+        const channel = await Channel.findOne({owner : userId}).populate("owner", "-password");
         if(!channel) return res.status(400).json({message : "channel does not exist"});
 
-        if(name && channel !== channel.name){
+        if(name && name !== channel.name){
             const nameExist = await Channel.findOne({name})
             if(nameExist)   return res.status(400).json({message : "Channel is already taken"});
             channel.name = name;

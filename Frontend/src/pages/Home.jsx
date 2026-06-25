@@ -20,7 +20,7 @@ export const Home = () => {
       {/* main section */}
       <main className={`overflow-y-auto p-4 flex flex-col pb-16 transition-all duration-300 ${Sidebaropen ? 'md:ml-40' : 'md:ml-15'}`}>
 
-        <Categories Sidebaropen={Sidebaropen}/>
+        <Categories/>
 
         {popup && <Profile/>}
 

@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { FaUserCircle } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import logo from "../../assets/Mytube.png";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import { backendURL } from '../../App';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
+import { setChannelData } from '../../redux/userSlice';
 
 export const UpdateChannel = () => {
   const {channelData} = useSelector(state => state.user);
@@ -18,6 +19,7 @@ export const UpdateChannel = () => {
   const [category, setCategory] = useState(channelData?.category);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleAvatar = (e) => {
     setAvatar(e.target.files[0]);
@@ -42,9 +44,9 @@ export const UpdateChannel = () => {
 
     try {
       const response = await axios.post(`${backendURL}/api/user/updateChannel`, formData, {withCredentials : true});
-      console.log(response);
+      dispatch(setChannelData(response?.data?.updatedChannel));
       toast.success(response.data.message, {pauseOnHover: false});
-      navigate('/');
+      navigate('/viewChannel');
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", { pauseOnHover: false });
       console.log(`create update error : ${error}`);

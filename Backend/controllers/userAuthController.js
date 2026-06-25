@@ -95,7 +95,7 @@ export const SignUpWithGoogle = async (req, res) => {
         const {userName, email, photoUrl} = req.body;
         let googlePhoto = photoUrl;
 
-        const user = await User.findOne({email});
+        let user = await User.findOne({email});
         if(!user)   user = await User.create({userName, email, photoUrl : googlePhoto});
         else{
             if(!user.photoUrl && googlePhoto){

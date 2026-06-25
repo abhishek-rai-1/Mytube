@@ -5,9 +5,11 @@ import { FaSearch } from "react-icons/fa";
 import { FaMicrophone } from "react-icons/fa";
 import { BsFillPersonFill } from "react-icons/bs";
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export const Header = ({Sidebaropen, setSidebaropen, setPopup}) => {
     const {userData} = useSelector((state) => state.user);
+    const navigate = useNavigate();
 
     return (
         <header className='fixed left-0 top-0 z-50 border-b border-gray-600 h-16 p-4 w-full bg-gray-900'>
@@ -16,7 +18,7 @@ export const Header = ({Sidebaropen, setSidebaropen, setPopup}) => {
                 {/* left */}
                 <div className='flex items-center gap-4'>
                     <button className='bg-[#272727] text-xl p-2 rounded-full hidden md:inline cursor-pointer' onClick={() => setSidebaropen(!Sidebaropen)}> <GiHamburgerMenu/> </button>
-                    <div className='flex items-center'>
+                    <div className='flex items-center cursor-pointer' onClick={() => navigate('/')}>
                         <img src={Mytube} alt="mytube icon" className='w-15'/>
                         <span className='font-bold text-md'>MyTube</span>
                     </div>

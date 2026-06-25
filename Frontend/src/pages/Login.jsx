@@ -48,11 +48,11 @@ export const Login = () => {
         <h1 className="text-center text-2xl font-semibold mb-5"> Login Creation </h1>
 
         <form>
-          <input type="text" name="identifier" value={userDetails.identifier} onChange={updateUserDetails} placeholder="UserName / Email" className="w-full focus:outline-none p-2 rounded-md border border-gray-500 mb-5 focus:border-amber-500"/>
+          <input type="text" name="identifier" value={userDetails.identifier} onChange={updateUserDetails} placeholder="UserName / Email" className="w-full focus:outline-none p-2 rounded-md border border-gray-500 mb-5 focus:border-amber-500 bg-[#37383b]"/>
 
           <div className="w-full border focus:outline-none focus-within:border-amber-500 mb-5 border-gray-500 flex justify-between items-center rounded-md p-2">
 
-            <input type={showPassword ? "text" : "password"} placeholder="Password" name="password" value={userDetails.password} onChange={updateUserDetails} className="w-[85%] focus:outline-none" />
+            <input type={showPassword ? "text" : "password"} placeholder="Password" name="password" value={userDetails.password} onChange={updateUserDetails} className="w-[85%] focus:outline-none bg-[#37383b]" />
 
             <span onClick={() => setShowPassword(!showPassword)} className="cursor-pointer">
               {showPassword ? <FiEye /> : <FiEyeOff />}
