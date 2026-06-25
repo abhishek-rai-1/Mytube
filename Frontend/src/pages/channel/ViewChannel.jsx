@@ -1,6 +1,6 @@
 import React from 'react'
 import {useSelector} from "react-redux";
-import create from "../../assets/create.png"
+import create from "/create.png"
 import { useNavigate } from 'react-router-dom';
 
 export const ViewChannel = () => {
@@ -42,7 +42,7 @@ export const ViewChannel = () => {
           <img src={create} alt="create logo" className='w-20'/>
           <p className='font-medium'>Create Content</p>
           <p className='text-gray-400 text-sm text-center'>Upload and record.</p>
-          <button className='bg-gray-500 px-4 py-2 rounded-full font-medium cursor-pointer hover:bg-gray-600'>+ Create</button>
+          <button className='bg-gray-500 px-4 py-2 rounded-full font-medium cursor-pointer hover:bg-gray-600' onClick={() => navigate('/create')}>+ Create</button>
         </div>
       </div>
     </div>

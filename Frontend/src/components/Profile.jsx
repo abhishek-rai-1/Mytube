@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { backendURL } from '../App';
 import { toast } from 'react-toastify';
-import { setUserData } from '../redux/userSlice';
+import { setChannelData, setUserData } from '../redux/userSlice';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../utils/Firebase';
 
@@ -23,6 +23,7 @@ export const Profile = () => {
         try {
             const result = await axios.get(`${backendURL}/api/auth/signout`, {withCredentials : true});
             dispatch(setUserData(null));
+            dispatch(setChannelData(null));
             toast.success(result?.data?.message, {pauseOnHover: false});
         } catch (error) {
             toast.error( error.response?.data?.message || "Something went wrong", {pauseOnHover: false});

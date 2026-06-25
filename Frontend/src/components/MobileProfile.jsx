@@ -9,7 +9,7 @@ import { MdOutlineHistory, MdOutlinePlaylistPlay, MdOutlineOndemandVideo } from 
 import { AiOutlineLike } from "react-icons/ai";
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../../utils/Firebase';
-import { setUserData } from '../redux/userSlice';
+import { setChannelData, setUserData } from '../redux/userSlice';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ export const MobileProfile = () => {
         try {
             const result = await axios.get(`${backendURL}/api/auth/signout`, {withCredentials : true});
             dispatch(setUserData(null));
+            dispatch(setChannelData(null));
             toast.success(result?.data?.message, {pauseOnHover: false});
         } catch (error) {
             toast.error( error.response?.data?.message || "Something went wrong", {pauseOnHover: false});
@@ -49,7 +50,7 @@ export const MobileProfile = () => {
     }
 
     return (
-        <div className='md:hidden bg-[#0f0f0f] h-full w-full flex flex-col p-2.5 pt-2'>
+        <div className='md:hidden bg-[#0f0f0f] h-full w-full flex flex-col p-2.5 mt-6'>
             {/* top profile section */}
             {
                 userData && 

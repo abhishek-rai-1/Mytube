@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { GiHamburgerMenu } from "react-icons/gi";
-import Mytube from "../assets/Mytube.png"
+import Mytube from "/Mytube.png";
 import { FaSearch } from "react-icons/fa";
 import { FaMicrophone } from "react-icons/fa";
 import { BsFillPersonFill } from "react-icons/bs";
@@ -37,7 +37,7 @@ export const Header = ({Sidebaropen, setSidebaropen, setPopup}) => {
                 <div className='hidden md:flex items-center gap-3'>
                     {
                         userData?.channel && 
-                        <button className='bg-[#272727] rounded-full border border-gray-600 flex gap-2 items-center px-3 py-1 cursor-pointer'>
+                        <button className='bg-[#272727] rounded-full border border-gray-600 flex gap-2 items-center px-3 py-1 cursor-pointer' onClick={() => navigate('/create')}>
                             <span className='text-2xl'>+</span>
                             <span>Create</span>
                         </button> 

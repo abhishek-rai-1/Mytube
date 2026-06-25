@@ -1,17 +1,17 @@
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { backendURL } from '../App'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setChannelData } from '../redux/userSlice'
 import { toast } from 'react-toastify'
 
 export const GetChannelData = () => {
     const dispatch = useDispatch();
+    const {userData} = useSelector(state => state.user);
 
     const fetchChannel = async () => {
         try {
             const result = await axios.get(`${backendURL}/api/user/getChannel`, {withCredentials : true});
-            console.log(result);
             dispatch(setChannelData(result.data));
         } catch (error) {
             dispatch(setChannelData(null));
@@ -22,5 +22,5 @@ export const GetChannelData = () => {
 
     useEffect(() => {
         fetchChannel();
-    }, [])
+    }, [userData]);
 }

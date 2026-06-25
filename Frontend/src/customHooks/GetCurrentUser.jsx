@@ -1,12 +1,13 @@
 import axios from 'axios'
 import React, { useEffect } from 'react'
 import { backendURL } from '../App'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setUserData } from '../redux/userSlice'
 import { toast } from 'react-toastify'
 
 export const GetCurrentUser = () => {
     const dispatch = useDispatch();
+    const {channelData} = useSelector(state => state.user);
 
     const fetchUser = async () => {
         try {
