@@ -26,7 +26,7 @@ export const Home = () => {
 
         {popup && <Profile/>}
 
-        <div className='mt-2'>
+        <div className='mt-10'>
           <Outlet/>
         </div>
 

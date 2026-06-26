@@ -41,7 +41,7 @@ const shortSchema = new mongoose.Schema({
         type : String,
         default : ""
     },
-    videoUrl : {
+    shortUrl : {
         type : String,
         required : true
     },

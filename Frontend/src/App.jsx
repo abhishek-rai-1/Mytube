@@ -14,6 +14,11 @@ import { GetChannelData } from './customHooks/GetChannelData'
 import { UpdateChannel } from './pages/channel/UpdateChannel'
 import { useSelector } from 'react-redux'
 import { CreatePage } from './pages/CreatePage'
+import { Video } from './pages/video/CreateVideo'
+import { Short } from './pages/short/CreateShort'
+import { Playlist } from './pages/playlist/CreatePlaylist'
+import { Post } from './pages/post/CreatePost'
+import { GetVideoData } from './customHooks/GetVideoData'
 
 export const backendURL = "http://localhost:3000";
 
@@ -28,6 +33,7 @@ const RouteProtection = ({userData, children}) => {
 export const App = () => {
   GetCurrentUser();
   GetChannelData();
+  GetVideoData();
 
   const {userData} = useSelector(state => state.user);
 
@@ -41,6 +47,10 @@ export const App = () => {
           <Route path='/viewChannel' element={<RouteProtection userData={userData}><ViewChannel/></RouteProtection>}/>
           <Route path='/updateChannel' element={<RouteProtection userData={userData}><UpdateChannel/></RouteProtection>}/>
           <Route path='/create' element={<RouteProtection userData={userData}><CreatePage/></RouteProtection>}/>
+          <Route path='/createVideo' element={<RouteProtection userData={userData}><Video/></RouteProtection>}/>
+          <Route path='/createShort' element={<RouteProtection userData={userData}><Short/></RouteProtection>}/>
+          <Route path='/createPlaylist' element={<RouteProtection userData={userData}><Playlist/></RouteProtection>}/>
+          <Route path='/createPost' element={<RouteProtection userData={userData}><Post/></RouteProtection>}/>
         </Route>
         <Route path='/SignUp' element={<SignUp/>}/>
         <Route path='/Login' element={<Login/>}/>

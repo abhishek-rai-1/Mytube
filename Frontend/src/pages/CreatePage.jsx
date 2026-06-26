@@ -3,32 +3,43 @@ import { FaVideo, FaPen } from "react-icons/fa";
 import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlinePlaylistPlay } from "react-icons/md";
 import create from "/create.png";
+import { useNavigate } from 'react-router-dom';
 
 export const CreatePage = () => {
     const options = [
         {
             id : "video",
             icon : <FaVideo size={25}/>,
-            title : "Upload Video"
+            title : "Upload Video",
+            url : '/createVideo'
         },
         {
             id : "short",
             icon : <SiYoutubeshorts size={25}/>,
-            title : "Create Short"
+            title : "Create Short",
+            url : '/createShort'
         },
         {
             id : "post",
             icon : <FaPen size={25}/>,
-            title : "Craete Post"
+            title : "Craete Post",
+            url : '/createPost'
         },
         {
             id : "playlist",
             icon : <MdOutlinePlaylistPlay size={25}/>,
-            title : "New Playlist"
+            title : "New Playlist",
+            url : '/createPlaylist'
         },
     ]
 
     const [selected, setSelected] = useState("");
+    const navigate = useNavigate();
+
+    const handleRoute = () => {
+        const found = options.find(opt => opt.id === selected)
+        navigate(found.url);
+    }
 
     return (
         <div className='bg-[#0f0f0f] min-h-screen px-6 py-8 mt-10 flex flex-col'>
@@ -59,11 +70,12 @@ export const CreatePage = () => {
                     :
                         <div className='text-center'>
                             <p className='mt-4 font-medium'>Ready to create ?</p>
+
                             <p className='text-gray-400 text-sm'>Click below to start your {options.find(opt => opt.id === selected)?.title.toLowerCase()}</p>
-                            <button className='bg-orange-400 hover:bg-orange-500 text-md hover:scale-125 rounded-full px-4 py-2 font-medium cursor-pointer transition-all duration-300 mt-4'>+ Create</button>
+
+                            <button className='bg-orange-400 hover:bg-orange-500 text-md hover:scale-110 rounded-full px-4 py-2 font-medium cursor-pointer transition-all duration-300 mt-4' onClick={handleRoute}>+ Create</button>
                         </div>
                 }
-
             </div>
         </div>
     )

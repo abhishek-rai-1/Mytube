@@ -1,4 +1,5 @@
 import uploadOnCloudinary from "../config/cloudinary.js";
+import Channel from "../models/ChannelModel.js";
 import Video from "../models/videoModel.js";
 
 export const createVideo = async (req, res) => {
@@ -7,7 +8,7 @@ export const createVideo = async (req, res) => {
 
         if(!title || !description || !channelId)    return res.status(400).json({message : "title, description, channelId is required"});
 
-        const channel = await Channel.findById({channelId});
+        const channel = await Channel.findById(channelId);
         if(!channel)    return res.status(400).json({message : "Channel is not found"});
 
         if(!req.files?.video || !req.files?.thumbnail)  return res.status(400).json({message : "video and thumbnail are requied"});
@@ -17,7 +18,7 @@ export const createVideo = async (req, res) => {
         const uploadThumbnail = await uploadOnCloudinary(req.files?.thumbnail[0].path)
 
         let parsedTag = [];
-        if(tag){
+        if(tags){
             try {
                 parsedTag = JSON.parse(tags);
             } catch (error) {
@@ -29,8 +30,21 @@ export const createVideo = async (req, res) => {
 
         await Channel.findByIdAndUpdate(channel._id, {$push : {videos : videoData._id}}, {new : true});
 
-        return res.status(201).json(videoData);
+        return res.status(201).json({message : "video uploaded successfully", videoData});
     } catch (error) {
-        return res.status(500).json({message : `failed to create video ${error}`})
+        console.log(error);
+        return res.status(500).json({message : "failed to create video"})
+    }
+}
+
+export const getVideos = async(req, res) => {
+    try {
+        const videos = await Video.find().sort({createdAt : -1})
+        if(!videos) return res.status(400).json({message : "videos are not present"});
+
+        return res.status(200).json(videos);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({message : "failed to get videos"});
     }
 }
