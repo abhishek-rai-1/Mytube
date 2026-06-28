@@ -7,8 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import { toast } from 'react-toastify';
 import { backendURL } from '../../App';
+import { uploadToCloudinary } from '../../../utils/UploadToCloudinary';
+import { getCloudinarySignature } from '../../customHooks/GetCloudinarySignature';
 
-export const Video = () => {
+export const CreateVideo = () => {
     const [videoContent, setVideoContent] = useState({ video : null, thumbnail : null,  title : "", description : "", tags : "" })
     const [loading, setLoading] = useState(false);
     const {channelData} = useSelector(state => state.user);
@@ -22,24 +24,47 @@ export const Video = () => {
             setVideoContent({...videoContent, [name] : e.target.value})
     }
 
+    const allowedVideos = ["video/mp4", "video/webm", "video/quicktime"];
+
     const handleUploadVideo = async() => {
         const {video, thumbnail, title, description, tags} = videoContent;
-        setLoading(true);
 
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("description", description);
-        formData.append("tags", JSON.stringify(tags.split(',').map(tag => tag.trim())));
-        formData.append("thumbnail", thumbnail);
-        formData.append("video", video);
-        formData.append("channelId", channelData._id);
+        if (!allowedVideos.includes(video.type)) {
+            toast.error("Only MP4, WEBM and MOV are allowed.");
+            return;
+        }
+
+        if (video.size > 500 * 1024 * 1024) {
+            toast.error("Video must be under 500 MB");
+            return;
+        }
 
         try {
-            const response = await axios.post(`${backendURL}/api/content/createVideo`, formData, {withCredentials : true});
+            setLoading(true);
+
+            await axios.post(`${backendURL}/api/content/validateVideoChannel`, {channelId : channelData._id}, {withCredentials : true});
+
+            const sign = await getCloudinarySignature();
+
+            const thumbnailUrl = await uploadToCloudinary(thumbnail, sign, "image");
+            console.log(thumbnailUrl);
+            const videoUrl = await uploadToCloudinary(video, sign, "video");
+            console.log(videoUrl);
+
+
+            // const [thumbnailUrl, videoUrl] = await Promise.all([ uploadToCloudinary(thumbnail, sign, "image"), uploadToCloudinary(video, sign, "video") ]);
+
+            const backendData = {title, description, thumbnailUrl : videoUrl.url, videoUrl : videoUrl.url, channelId : channelData._id,
+                tags : JSON.stringify(tags.split(',').map(tag => tag.trim()))
+            }
+
+            const response = await axios.post(`${backendURL}/api/content/createVideo`, backendData, {withCredentials : true});
             console.log(response.data);
             toast.success(response.data.message, {pauseOnHover: false} );
+
             navigate('/create');
-        } catch (error) {
+
+        }catch (error) {
             console.log(error);
             toast.error(error.response?.data?.message);
         }

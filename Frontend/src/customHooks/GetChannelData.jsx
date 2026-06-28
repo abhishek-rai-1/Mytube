@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 
 export const GetChannelData = () => {
     const dispatch = useDispatch();
-    const {userData} = useSelector(state => state.user);
+    // const {userData} = useSelector(state => state.user);
 
     const fetchChannel = async () => {
         try {
@@ -22,5 +22,5 @@ export const GetChannelData = () => {
 
     useEffect(() => {
         fetchChannel();
-    }, [userData]);
+    }, []);
 }

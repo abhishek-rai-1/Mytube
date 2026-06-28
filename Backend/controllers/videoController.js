@@ -4,18 +4,14 @@ import Video from "../models/videoModel.js";
 
 export const createVideo = async (req, res) => {
     try {
-        const {title, description, tags, channelId} = req.body;
+        const {title, description, tags, channelId, thumbnailUrl, videoUrl} = req.body;
 
         if(!title || !description || !channelId)    return res.status(400).json({message : "title, description, channelId is required"});
 
         const channel = await Channel.findById(channelId);
         if(!channel)    return res.status(400).json({message : "Channel is not found"});
 
-        if(!req.files?.video || !req.files?.thumbnail)  return res.status(400).json({message : "video and thumbnail are requied"});
-
-        const uploadVideo = await uploadOnCloudinary(req.files?.video[0].path)
-
-        const uploadThumbnail = await uploadOnCloudinary(req.files?.thumbnail[0].path)
+        if(!thumbnailUrl || !videoUrl)  return res.status(400).json({message : 'video and thumbnail is required'});
 
         let parsedTag = [];
         if(tags){
@@ -26,7 +22,7 @@ export const createVideo = async (req, res) => {
             }
         }
 
-        const videoData = await Video.create({channel : channel._id, title, description, videoUrl : uploadVideo, thumbnail : uploadThumbnail, tags : parsedTag});
+        const videoData = await Video.create({channel : channel._id, title, description, videoUrl, thumbnail : thumbnailUrl, tags : parsedTag});
 
         await Channel.findByIdAndUpdate(channel._id, {$push : {videos : videoData._id}}, {new : true});
 

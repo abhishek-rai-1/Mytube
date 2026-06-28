@@ -1,6 +1,7 @@
 import User from "../models/userModel.js"
 import Channel from "../models/ChannelModel.js"
 import uploadOnCloudinary from "../config/cloudinary.js";
+import { validateCreateChannel } from "./validateCreateChannel.js";
 
 export const getCurrentUser = async (req, res) => {
     try {
@@ -13,19 +14,17 @@ export const getCurrentUser = async (req, res) => {
 
 export const createChannel = async (req, res) => {
     try {
-        const {name, description, category} = req.body;
-
+        const {name, description, category, avatar, banner} = req.body;
         const userId = req.userId;
+
+        if(!name)  return res.status(400).json({message : "channel name is required"});
+        if(!avatar || !banner)  return res.status(400).json({message : "avatar and banner url is required"});
 
         const existingChannel = await Channel.findOne({owner : userId});
         if(existingChannel) return res.status(400).json({message : "User already have a channel"});
 
         const nameExist = await Channel.findOne({name})
         if(nameExist)   return res.status(400).json({message : "Channel name should be unique"});
-
-        let avatar, banner;
-        if(req.files?.avatar)   avatar = await uploadOnCloudinary(req.files?.avatar?.[0].path);
-        if(req.files?.banner)   banner = await uploadOnCloudinary(req.files?.banner?.[0].path);
 
         const channel = await Channel.create({name, description, category, avatar, banner, owner: userId});
         await User.findByIdAndUpdate(userId, {channel : channel._id, userName : name, photoUrl : avatar});
@@ -52,7 +51,7 @@ export const getChannel = async(req, res) => {
 
 export const updateChannel = async(req, res) => {
     try {
-        const {name, description, category} = req.body;
+        const {name, description, category, avatar, banner} = req.body;
 
         const userId = req.userId;
 
@@ -64,18 +63,14 @@ export const updateChannel = async(req, res) => {
             if(nameExist)   return res.status(400).json({message : "Channel is already taken"});
             channel.name = name;
         }
+
+        if(!avatar || !banner)  return res.status(400).json({message : "avatar and banner url is required"});
         
         if(description !== undefined)   channel.description = description;
         if(category !== undefined)  channel.category = category;
 
-        if(req.files?.avatar){
-            const avatar = await uploadOnCloudinary(req.files?.avatar?.[0].path);
-            channel.avatar = avatar;
-        }
-        if(req.files?.banner){
-            const banner = await uploadOnCloudinary(req.files?.banner?.[0].path);
-            channel.banner = banner;
-        }
+        channel.avatar = avatar;
+        channel.banner = banner;
         
         const updatedChannel = await channel.save();
 

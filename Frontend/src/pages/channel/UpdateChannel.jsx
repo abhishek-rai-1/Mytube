@@ -7,6 +7,8 @@ import { backendURL } from '../../App';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { setChannelData } from '../../redux/userSlice';
+import { uploadToCloudinary } from '../../../utils/UploadToCloudinary';
+import { getCloudinarySignature } from '../../customHooks/GetCloudinarySignature';
 
 export const UpdateChannel = () => {
   const {channelData} = useSelector(state => state.user);
@@ -31,24 +33,41 @@ export const UpdateChannel = () => {
   const nextStep = () => setStep(prev => prev+1)
   const prevStep = () => setStep(prev => prev-1)
 
-  const handleUpdateChannel = async () => {
-    setLoading(true);
+  const allowed = ["image/png", "image/jpeg", "image/webp"];
 
-    const formData = new FormData();
-    formData.append("avatar", avatar);
-    formData.append("banner", banner);
-    formData.append("name", channelName);
-    formData.append("description", description);
-    formData.append("category", category);
+  const handleUpdateChannel = async () => {
+    if((avatar && !allowed.includes(avatar?.type)) || (banner && !allowed.includes(banner?.type))) {
+      toast.error("Only PNG, JPG and WEBP are allowed.");
+      return;
+    }
+
+    if((avatar && avatar?.size > 5 * 1024 * 1024) || (banner && banner?.size > 5 * 1024 * 1024)) {
+      toast.error("Avatar and Banner must be less than 5 MB");
+      return;
+    }
 
     try {
-      const response = await axios.post(`${backendURL}/api/user/updateChannel`, formData, {withCredentials : true});
-      dispatch(setChannelData(response?.data?.updatedChannel));
+      setLoading(true);
+
+      await axios.post(`${backendURL}/api/user/validateUpdateChannel`, {name : channelName}, {withCredentials : true});
+
+      const sign = await getCloudinarySignature();
+
+      const [avatarUrl, bannerUrl] = await Promise.all([
+        avatar ? uploadToCloudinary(avatar, sign) : Promise.resolve(channelData?.avatar),
+        banner ? uploadToCloudinary(banner, sign) : Promise.resolve(channelData?.banner)
+      ]);
+
+      const response = await axios.post(`${backendURL}/api/user/updateChannel`, {avatar : avatarUrl.secure_url, banner : bannerUrl.secure_url, name : channelName, description, category}, {withCredentials : true});
+
       toast.success(response.data.message, {pauseOnHover: false});
+
+      dispatch(setChannelData(response.data.updatedChannel));
+
       navigate('/viewChannel');
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", { pauseOnHover: false });
-      console.log(`create update error : ${error}`);
+      console.log(`update channel error : ${error}`);
     }
     finally{
       setLoading(false);
@@ -66,13 +85,9 @@ export const UpdateChannel = () => {
               <h2 className='text-2xl font-semibold mb-4'>Update channel</h2>
               <p className='text-sm text-gray-400 mb-6'>Choose your profile picture, Channel name</p>
 
-              <label htmlFor="avatar" className='cursor-pointer flex flex-col items-center mb-6'>
-                {
-                  avatar ? 
-                    <img src={URL.createObjectURL(avatar)} alt="avatar photo" className='w-20 h-20 object-cover border-2 border-gray-400 rounded-2xl'/>
-                  : 
-                    <FaUserCircle size={40} className='w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center text-gray-400'/>
-                }
+              <label htmlFor="avatar" className='cursor-pointer flex flex-col items-center mb-6'>                
+                <img src={avatar ? URL.createObjectURL(avatar) : channelData?.avatar} alt="avatar photo" className='w-20 h-20 object-cover border-2 border-gray-400 rounded-2xl'/>
+                
                 <span className='text-orange-400 text-sm mt-2'>Upload Avatar</span>
                 <input type="file" className='hidden' id='avatar' accept='image/*' onChange={handleAvatar}/>
               </label>
@@ -94,12 +109,8 @@ export const UpdateChannel = () => {
 
                 <label className='cursor-pointer flex flex-col items-center'>
                   {
-                    avatar ? 
-                      <img src={URL.createObjectURL(avatar)} alt="avatar photo" className='w-20 h-20 object-cover border-2 border-gray-400 rounded-2xl'/>
-                    : 
-                      <FaUserCircle size={40} className='w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center text-gray-400'/>
+                    <img src={avatar ? URL.createObjectURL(avatar) : channelData?.avatar} alt="avatar photo" className='w-20 h-20 object-cover border-2 border-gray-400 rounded-2xl'/>
                   }
-
                 </label>
 
                 <h2 className='mt-3 text-lg font-semibold'>{channelName}</h2>
@@ -118,13 +129,9 @@ export const UpdateChannel = () => {
 
               <label htmlFor="banner" className='w-full cursor-pointer block mb-6'>
                 {
-                  banner ? 
-                    <img src={URL.createObjectURL(banner)} alt="banner photo" className='w-full h-32 object-cover rounded-lg mb-2 border border-gray-700'/>
-                  :
-                    <div className='w-full h-32 bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 border border-gray-700 mb-2'>
-                      Click to uplaod banner image
-                    </div>
+                  <img src={banner ? URL.createObjectURL(banner) : channelData?.banner} alt="banner photo" className='w-full h-32 object-cover rounded-lg mb-2 border border-gray-700'/>
                 }
+
                 <span className='text-orange-400 text-sm mt-2'>Banner Image</span>
                 <input type="file" className='hidden' id='banner' accept='image/*' onChange={handleBanner}/>
               </label>

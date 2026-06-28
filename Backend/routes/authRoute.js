@@ -3,7 +3,6 @@ import { resetPassword, sendOtp, SignIn, SignOut, SignUp, SignUpWithGoogle, veri
 
 const authRouter = express.Router();
 
-// authRouter.post('/signup', upload.single("photoUrl"), SignUp);
 authRouter.post('/signup', SignUp);
 authRouter.post('/login', SignIn);
 authRouter.get('/signout', SignOut);

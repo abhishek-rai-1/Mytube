@@ -8,6 +8,8 @@ import { backendURL } from '../../App';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { setChannelData } from '../../redux/userSlice';
+import { uploadToCloudinary } from '../../../utils/UploadToCloudinary';
+import { getCloudinarySignature } from "../../customHooks/GetCloudinarySignature"
 
 export const CreateChannel = () => {
   const {userData} = useSelector(state => state.user);
@@ -32,20 +34,36 @@ export const CreateChannel = () => {
   const nextStep = () => setStep(prev => prev+1)
   const prevStep = () => setStep(prev => prev-1)
 
-  const handleCreateChannel = async () => {
-    setLoading(true);
+  const allowed = ["image/png", "image/jpeg", "image/webp"];
 
-    const formData = new FormData();
-    formData.append("avatar", avatar);
-    formData.append("banner", banner);
-    formData.append("name", channelName);
-    formData.append("description", description);
-    formData.append("category", category);
+  const handleCreateChannel = async () => {
+    if(!allowed.includes(avatar?.type) || !allowed.includes(banner?.type)) {
+      toast.error("Only PNG, JPG and WEBP are allowed.");
+      return;
+    }
+
+    if((avatar?.size > 5 * 1024 * 1024) || (banner?.size > 5 * 1024 * 1024)) {
+      toast.error("Avatar and Banner must be less than 5 MB");
+      return;
+    }
 
     try {
-      const response = await axios.post(`${backendURL}/api/user/createChannel`, formData, {withCredentials : true});
+      setLoading(true);
+
+      await axios.post(`${backendURL}/api/user/validateCreateChannel`, {name : channelName}, {withCredentials : true});
+
+      const sign = await getCloudinarySignature();
+
+      const [avatarUrl, bannerUrl] = await Promise.all([ uploadToCloudinary(avatar, sign), uploadToCloudinary(banner, sign) ]);
+
+      const response = await axios.post(`${backendURL}/api/user/createChannel`, {avatar : avatarUrl.secure_url, banner : bannerUrl.secure_url, name : channelName, description, category}, {withCredentials : true});
+
+      console.log(response);
+
       toast.success(response.data.message, {pauseOnHover: false});
+
       dispatch(setChannelData(response.data.channel));
+
       navigate('/viewChannel');
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong", { pauseOnHover: false });
@@ -67,7 +85,7 @@ export const CreateChannel = () => {
           userData?.photoUrl ? 
             <img src={userData?.photoUrl} alt='your profile picture' className='w-9 h-9 rounded-full object-cover cursor-pointer'/>
           :
-            <span className='bg-pink-600 text-white px-3 py-1 rounded-full font-bold' onClick={() => setPopup(prev => !prev)}> {userData?.userName?.[0]?.toUpperCase()} </span>
+            <span className='bg-pink-600 text-white px-3 py-1 rounded-full font-bold'> {userData?.userName?.[0]?.toUpperCase()} </span>
         }
       </header>
 
@@ -146,7 +164,7 @@ export const CreateChannel = () => {
               
               <input type="text" placeholder='Channel Category' className='w-full p-3 mb-6 rounded-lg bg-[#212121] border border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400' value={category} onChange={(e) => setCategory(e.target.value)}/>
 
-              <button onClick={handleCreateChannel} disabled={!description || !category || loading} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>{loading ? <ClipLoader size={20} color='white'/> :"Save and Create Channel"}</button>
+              <button onClick={handleCreateChannel} disabled={!(description.trim()) || !(category.trim()) || !(channelName.trim()) || !avatar || !banner ||loading} className='w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition rounded-lg font-medium disabled:bg-gray-600 py-2 cursor-pointer'>{loading ? <ClipLoader size={20} color='white'/> :"Save and Create Channel"}</button>
 
               <span className='w-full flex items-center justify-center text-sm text-blue-400 cursor-pointer hover:underline mt-2' onClick={prevStep}>Back</span>
             </>

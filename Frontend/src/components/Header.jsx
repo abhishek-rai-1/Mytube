@@ -40,13 +40,13 @@ export const Header = ({Sidebaropen, setSidebaropen, setPopup}) => {
                         <button className='bg-[#272727] rounded-full border border-gray-600 flex gap-2 items-center px-3 py-1 cursor-pointer' onClick={() => navigate('/create')}>
                             <span className='text-2xl'>+</span>
                             <span>Create</span>
-                        </button> 
+                        </button>
                     }
 
                     {
                         userData?.photoUrl ? 
                             <img src={userData?.photoUrl} className='w-9 h-9 rounded-full object-cover border border-gray-700 cursor-pointer hidden md:flex' onClick={() => setPopup(prev => !prev)}/>
-                            : 
+                            :
                                 userData?.userName ? 
                                     <span className='bg-pink-600 text-white px-3 py-1 rounded-full font-bold cursor-pointer' onClick={() => setPopup(prev => !prev)}> {userData?.userName?.[0]?.toUpperCase()} </span>
                                 : 

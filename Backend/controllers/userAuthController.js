@@ -1,4 +1,3 @@
-// import uploadOnCloudinary from "../config/cloudinary.js";
 import User from "../models/userModel.js";
 import validator from "validator";
 import bcrypt, { hash } from "bcryptjs";

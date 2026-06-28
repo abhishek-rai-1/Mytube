@@ -31,9 +31,9 @@ export const ViewChannel = () => {
           <p className='text-sm text-gray-400 mt-1'>More about this channel... <span className='text-orange-500 cursor-pointer'>{channelData?.category}</span></p>
 
           <div className='flex gap-4 mt-4'>
-            <button className='bg-[#272727] px-4 py-2 rounded-full font-medium cursor-pointer hover:text-xl transition-all duration-300' onClick={() => navigate('/updateChannel')}>Customize Channel</button>
+            <button className='bg-[#272727] px-4 py-2 rounded-full font-medium cursor-pointer transition-all duration-300' onClick={() => navigate('/updateChannel')}>Customize Channel</button>
             
-            <button className='bg-[#272727] px-4 py-2 rounded-full cursor-pointer font-medium hover:text-xl transition-all duration-300'>Manage Videos</button>
+            <button className='bg-[#272727] px-4 py-2 rounded-full cursor-pointer font-medium transition-all duration-300'>Manage Videos</button>
           </div>
 
         </div>
